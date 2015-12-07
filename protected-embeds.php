@@ -9,9 +9,11 @@
 
 namespace Protected_Embeds;
 
-require_once __DIR__ . '/inc/class-embed.php';
+if ( ! defined( 'PROTECTED_EMBEDS_DOMAIN' ) ) {
+	return;
+}
 
-define( 'PROTECTED_EMBEDS_DOMAIN', 'fusion.hm-vip.dev' );
+require_once __DIR__ . '/inc/class-embed.php';
 
 add_action( 'admin_init', __NAMESPACE__ . '\\create_database_table' );
 add_action( 'init', __NAMESPACE__ . '\\add_rewrite_rules' );
