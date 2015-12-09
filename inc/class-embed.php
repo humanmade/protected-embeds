@@ -4,6 +4,12 @@ namespace Protected_Embeds;
 
 class Embed {
 
+	/**
+	 * Get an Embed from the database based off id.
+	 *
+	 * @param  string $id
+	 * @return null|Embed
+	 */
 	public static function get( $id ) {
 		global $wpdb;
 		$row = $wpdb->get_row(
@@ -16,8 +22,16 @@ class Embed {
 		return new static( $row->embed_id, $row->src, $row->embed_group_id, $row->html );
 	}
 
-	public static function create( $src, $embed_group_id, $html ) {
-
+	/**
+	 * Create a new Embed from a html embed fragment.
+	 *
+	 * @param  string $html
+	 * @return Embed
+	 */
+	public static function create( $src = '', $embed_group_id = '', $html = '' ) {
+		global $wpdb;
+		$insert = $wpdb->insert( 'protected_embeds', array( 'src' => $src, 'embed_group_id' => $embed_group_id, 'html' => $html ) );
+		return new static( $wpdb->last_insert );
 	}
 
 	public function __construct( $id, $src, $embed_group_id, $html ) {
