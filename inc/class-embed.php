@@ -30,8 +30,9 @@ class Embed {
 	 */
 	public static function create( $src = '', $embed_group_id = '', $html = '' ) {
 		global $wpdb;
-		$insert = $wpdb->insert( 'protected_embeds', array( 'src' => $src, 'embed_group_id' => $embed_group_id, 'html' => $html ) );
-		return new static( $wpdb->last_insert );
+		$id = md5( $html . NONCE_SALT . time() );
+		$insert = $wpdb->insert( 'protected_embeds', array( 'embed_id' => $id, 'src' => $src, 'embed_group_id' => $embed_group_id, 'html' => $html ) );
+		return static::get( $id );
 	}
 
 	public function __construct( $id, $src, $embed_group_id, $html ) {
