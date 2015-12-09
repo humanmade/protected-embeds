@@ -19,6 +19,7 @@ add_action( 'admin_init', __NAMESPACE__ . '\\create_database_table' );
 add_action( 'init', __NAMESPACE__ . '\\add_rewrite_rules' );
 add_action( 'query_vars', __NAMESPACE__ . '\\add_public_query_vars' );
 add_action( 'parse_request', __NAMESPACE__ . '\\display_protected_iframe' );
+add_action( 'admin_init', __NAMESPACE__ . '\\load_shortcode_ui' );
 add_shortcode( 'protected-iframe', __NAMESPACE__ . '\\protected_iframe_shortcode' );
 
 function create_database_table() {
@@ -31,6 +32,18 @@ function create_database_table() {
 			UNIQUE KEY `embed_id` (`embed_id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8"
 	);
+}
+
+/**
+ * Load the Shortcode UI based off Shortcake, if shortcake is available.
+ */
+function load_shortcode_ui() {
+
+	if ( ! function_exists( 'shortcode_ui_register_for_shortcode' ) ) {
+		return;
+	}
+
+	require_once __DIR__ . '/inc/shortcode-ui/namespace.php';
 }
 
 /**
