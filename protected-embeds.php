@@ -9,10 +9,6 @@
 
 namespace Protected_Embeds;
 
-if ( ! defined( 'PROTECTED_EMBEDS_DOMAIN' ) ) {
-	return;
-}
-
 require_once __DIR__ . '/inc/class-embed.php';
 
 add_action( 'admin_init', __NAMESPACE__ . '\\create_database_table' );
@@ -53,6 +49,10 @@ function load_shortcode_ui() {
  * @return string
  */
 function protected_iframe_shortcode( $attrs ) {
+
+	if ( ! defined( 'PROTECTED_EMBEDS_DOMAIN' ) ) {
+		return;
+	}
 
 	$attrs = wp_parse_args( $attrs, array(
 		'id'     => null,
