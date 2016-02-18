@@ -11,12 +11,19 @@ class Embed {
 	 * @return null|Embed
 	 */
 	public static function get( $id ) {
-		global $wpdb;
-		$row = $wpdb->get_row(
-			$wpdb->prepare( "SELECT embed_id, src, embed_group_id, html FROM protected_embeds WHERE embed_id = %s", $id )
-		);
+
+		$row = wp_cache_get( $id, 'protected-embeds' );
+
 		if ( ! $row ) {
-			return null;
+			global $wpdb;
+
+			$row = $wpdb->get_row(
+				$wpdb->prepare( 'SELECT embed_id, src, embed_group_id, html FROM protected_embeds WHERE embed_id = %s', $id )
+			);
+
+			if ( ! $row ) {
+				return null;
+			}
 		}
 
 		return new static( $row->embed_id, $row->src, $row->embed_group_id, $row->html );
