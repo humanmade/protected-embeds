@@ -65,7 +65,7 @@ function protected_iframe_shortcode( $attrs ) {
 	$embed = Embed::get( $attrs['id'] );
 
 	if ( ! $embed ) {
-		return '';
+		return '<!-- Embed not found -->';
 	}
 
 	ob_start();
