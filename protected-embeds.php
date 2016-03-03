@@ -74,7 +74,7 @@ function protected_iframe_shortcode( $attrs ) {
 		id="wpcom-iframe-<?php echo esc_attr( $attrs['id'] ) ?>"
 		width="<?php echo esc_attr( $attrs['width'] ) ?>"
 		height="<?php echo esc_attr( $attrs['height'] ) ?>"
-		src="<?php echo esc_url( '//' . PROTECTED_EMBEDS_DOMAIN . '/protected-iframe/' .  $embed->get_id() ) ?>"
+		src="<?php echo esc_url( '//' . PROTECTED_EMBEDS_DOMAIN . '/protected-iframe/' . $embed->get_id() ) ?>"
 		scrolling="<?php echo esc_attr( $attrs['scrolling'] ) ?>"
 		frameborder="0"
 		class="<?php echo esc_attr( $attrs['class'] ) ?>"
