@@ -68,13 +68,15 @@ function protected_iframe_shortcode( $attrs ) {
 		return '<!-- Embed not found -->';
 	}
 
+	$target_origin = ( is_ssl() ? 'https://' : 'http://' ) . PROTECTED_EMBEDS_DOMAIN;
+
 	ob_start();
 	?>
 	<iframe
 		id="wpcom-iframe-<?php echo esc_attr( $attrs['id'] ) ?>"
 		width="<?php echo esc_attr( $attrs['width'] ) ?>"
 		height="<?php echo esc_attr( $attrs['height'] ) ?>"
-		src="<?php echo esc_url( '//' . PROTECTED_EMBEDS_DOMAIN . '/protected-iframe/' . $embed->get_id() ) ?>"
+		src="<?php echo esc_url( $target_origin . '/protected-iframe/' . $embed->get_id() ) ?>"
 		scrolling="<?php echo esc_attr( $attrs['scrolling'] ) ?>"
 		frameborder="0"
 		class="<?php echo esc_attr( $attrs['class'] ) ?>"
@@ -89,7 +91,7 @@ function protected_iframe_shortcode( $attrs ) {
 						iframe.contentWindow.postMessage( {
 							'msg_type': 'poll_size',
 							'frame_id': 'wpcom-iframe-<?php echo esc_attr( $attrs['id'] ) ?>'
-						}, window.location.protocol + '//<?php echo esc_js( PROTECTED_EMBEDS_DOMAIN ) ?>' );
+						}, <?php echo json_encode( $target_origin ); ?> );
 					}
 				}
 
@@ -160,7 +162,15 @@ function add_rewrite_rules() {
 }
 
 function display_protected_iframe( \WP $wp ) {
-	if ( empty( $wp->query_vars['protected-iframe'] ) ) {
+    $server = $_SERVER['HTTP_HOST'];
+
+    // Prevent any output on the embeds domain other than protected iframes
+    if ( PROTECTED_EMBEDS_DOMAIN === $server && empty( $wp->query_vars['protected-iframe'] ) ) {
+        wp_die();
+    }
+
+    // Don't return protected iframes on any other domain than the specified embeds domain
+	if ( PROTECTED_EMBEDS_DOMAIN !== $server || empty( $wp->query_vars['protected-iframe'] ) ) {
 		return;
 	}
 
