@@ -162,14 +162,14 @@ function add_rewrite_rules() {
 }
 
 function display_protected_iframe( \WP $wp ) {
-    $server = $_SERVER['HTTP_HOST'];
+	$server = $_SERVER['HTTP_HOST'];
 
-    // Prevent any output on the embeds domain other than protected iframes
-    if ( PROTECTED_EMBEDS_DOMAIN === $server && empty( $wp->query_vars['protected-iframe'] ) ) {
-        wp_die();
-    }
+	// Prevent any output on the embeds domain other than protected iframes
+	if ( PROTECTED_EMBEDS_DOMAIN === $server && empty( $wp->query_vars['protected-iframe'] ) ) {
+		wp_die();
+	}
 
-    // Don't return protected iframes on any other domain than the specified embeds domain
+	// Don't return protected iframes on any other domain than the specified embeds domain
 	if ( PROTECTED_EMBEDS_DOMAIN !== $server || empty( $wp->query_vars['protected-iframe'] ) ) {
 		return;
 	}
