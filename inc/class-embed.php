@@ -24,6 +24,8 @@ class Embed {
 			if ( ! $row ) {
 				return null;
 			}
+
+			wp_cache_set( $id, $row, 'protected-embeds' );
 		}
 
 		return new static( $row->embed_id, $row->src, $row->embed_group_id, $row->html );
@@ -39,6 +41,22 @@ class Embed {
 		global $wpdb;
 		$id = md5( $html . rand( 0, 10000 ) . time() );
 		$insert = $wpdb->insert( 'protected_embeds', array( 'embed_id' => $id, 'src' => $src, 'embed_group_id' => $embed_group_id, 'html' => $html ) );
+		return static::get( $id );
+	}
+
+	/**
+	 * Update the embed code on an Embed
+	 *
+	 * @param  int $id
+	 * @param  string $html
+	 * @return Embed
+	 */
+	public static function update( $id, $html = '' ) {
+		global $wpdb;
+		$update = $wpdb->update( 'protected_embeds', array( 'html' => $html ), array( 'embed_id' => $id ) );
+
+		wp_cache_delete( $id, 'protected-embeds' );
+
 		return static::get( $id );
 	}
 
