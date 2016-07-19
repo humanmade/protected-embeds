@@ -16,11 +16,13 @@ add_action( 'init', __NAMESPACE__ . '\\add_rewrite_rules' );
 add_action( 'query_vars', __NAMESPACE__ . '\\add_public_query_vars' );
 add_action( 'parse_request', __NAMESPACE__ . '\\display_protected_iframe' );
 add_action( 'admin_init', __NAMESPACE__ . '\\load_shortcode_ui' );
+add_filter( 'shortcode_ui_fields', __NAMESPACE__ . '\\shortcode_ui_fields' );
+add_action( 'print_shortcode_ui_templates', __NAMESPACE__ . '\\shortcode_ui_hidden_field_template' );
 add_shortcode( 'protected-iframe', __NAMESPACE__ . '\\protected_iframe_shortcode' );
 
 function create_database_table() {
 	global $wpdb;
-	$wpdb->query( "CREATE TABLE IF NOT EXISTS `protected_embeds` (
+	$wpdb->query( "CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}protected_embeds` (
 			`embed_id` varchar(64) NOT NULL,
 			`src` varchar(255) NOT NULL,
 			`embed_group_id` varchar(64) NOT NULL,
@@ -224,4 +226,21 @@ function display_protected_iframe( \WP $wp ) {
 	</html>
 	<?php
 	exit;
+}
+
+function shortcode_ui_fields( $fields ) {
+	$fields['hidden'] = array(
+		'template' => 'protected-embed-shortcode-ui-field-hidden',
+	);
+	return $fields;
+}
+
+function shortcode_ui_hidden_field_template() {
+	//@formatter:off
+	?>
+<script type="text/html" id="tmpl-protected-embed-shortcode-ui-field-hidden">
+	<input type="hidden" class="regular-text" name="{{ data.attr }}" id="{{ data.id }}" value="{{ data.value }}" {{{ data.meta }}} />
+</script>
+	<?php
+	//@formatter:on
 }

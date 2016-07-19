@@ -25,21 +25,18 @@ var protectedEmbedsUI = {
 	 */
 	getHtml: function( field, collection ) {
 		var id = field.value,
-			embedCodeInput = collection.pop(),
-			idInputField = sui.views.editAttributeField.getField( collection, 'id' );
+			embedCodeInput = collection[1];
 
 		if ( 'undefined' === typeof id || ! id ) {
 			wp.media.frame.views.view.setState('shortcake-bakery-embed')
 		}
-
-		idInputField.$el.find('input').attr( 'readonly', 'readonly' );
 
 		jQuery.get( ajaxurl, { action: 'protected-embeds-get', id: field.value },
 			function( response ) {
 				protectedEmbedsUI.embedCode = response.html;
 				var textArea = embedCodeInput.$el.find( 'textarea' );
 				textArea.val( response.html );
-				textArea.off('blur').on('blur', protectedEmbedsUI.updateHtml.bind( this, field.value, textArea ) );
+				textArea.off('blur').on('blur', protectedEmbedsUI.updateHtml.bind( this, field.value, textArea, collection ) );
 			}
 		);
 	},
@@ -50,17 +47,20 @@ var protectedEmbedsUI = {
 	 * Pops a confirmation box, asking whether the user intended to update the
 	 * embed code. If so, posts to the ajax endpoint to make that update.
 	 */
-	updateHtml: function( embedId, htmlElement ) {
-		newEmbedCode = htmlElement.val();
+	updateHtml: function( embedId, textArea, collection ) {
+		newEmbedCode = textArea.val();
 
 		if ( newEmbedCode !== protectedEmbedsUI.embedCode && confirm( 'Do you want to update the embed code?' ) ) {
-			jQuery.post( ajaxurl, { action: 'protected-embeds-update', id: embedId, html: htmlElement.val() },
+			jQuery.post( ajaxurl, { action: 'protected-embeds-update', id: embedId, html: textArea.val() },
 				function( response ) {
+					if ( ! embedId ) {
+						sui.views.editAttributeField.getField( collection, 'id' ).setValue( response.id );
+					}
 					protectedEmbedsUI.embedCode = response.html;
 				}
 			);
 		} else {
-			htmlElement.val( protectedEmbedsUI.embedCode );
+			textArea.val( protectedEmbedsUI.embedCode );
 		}
 	}
 }
