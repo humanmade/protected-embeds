@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Protected Embeds
  * Description: A drop-in replacement for WordPress.com protected embeds
- * Version: 0.1
+ * Version: 1.0
  * Author: Joe Hoyle, Human Made, Fusion
  */
 
