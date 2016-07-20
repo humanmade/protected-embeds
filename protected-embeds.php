@@ -85,14 +85,41 @@ function protected_iframe_shortcode( $attrs ) {
 	<script type="text/javascript">
 		( function() {
 			var func = function() {
-				var iframe = document.getElementById('wpcom-iframe-<?php echo esc_attr( $attrs['id'] ) ?>')
+				var iframe = document.getElementById('wpcom-iframe-<?php echo esc_attr( $attrs['id'] ) ?>'),
+				    iframeResize = ( '' === iframe.height )
 				if ( iframe ) {
 					iframe.onload = function() {
+						// Allow iframe's scrollHeight to be as small as possible
+						if ( iframeResize ) {
+							iframe.height = 1;
+						}
 						iframe.contentWindow.postMessage( {
 							'msg_type': 'poll_size',
 							'frame_id': 'wpcom-iframe-<?php echo esc_attr( $attrs['id'] ) ?>'
 						}, <?php echo json_encode( $target_origin ); ?> );
 					}
+				}
+
+				// debouncing function from John Hann
+				// http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/
+				var debounce = function (func, threshold, execAsap) {
+					var timeout;
+
+					return function debounced () {
+						var obj = this, args = arguments;
+						function delayed () {
+							if (!execAsap)
+								func.apply(obj, args);
+							timeout = null;
+						};
+
+						if (timeout)
+							clearTimeout(timeout);
+						else if (execAsap)
+							func.apply(obj, args);
+
+						timeout = setTimeout(delayed, threshold || 100);
+					};
 				}
 
 				// Autosize iframe
@@ -115,7 +142,7 @@ function protected_iframe_shortcode( $attrs ) {
 
 							if ( iframe && '' === iframe.width )
 								iframe.width = '100%';
-							if ( iframe && '' === iframe.height )
+							if ( iframe && iframeResize )
 								iframe.height = parseInt( e.data.height );
 
 							return;
@@ -124,10 +151,14 @@ function protected_iframe_shortcode( $attrs ) {
 					}
 				}
 
+				var funcOnResize = debounce( iframe.onload, 300 );
+
 				if ( 'function' === typeof window.addEventListener ) {
 					window.addEventListener( 'message', funcSizeResponse, false );
+					window.addEventListener( 'resize', funcOnResize, false );
 				} else if ( 'function' === typeof window.attachEvent ) {
 					window.attachEvent( 'onmessage', funcSizeResponse );
+					window.attachEvent( 'resize', funcOnResize );
 				}
 			}
 			if (document.readyState === 'complete') { func.apply(); /* compat for infinite scroll */ }
@@ -176,6 +207,13 @@ function display_protected_iframe( \WP $wp ) {
 
 	$embed = Embed::get( $wp->query_vars['protected-iframe'] );
 
+	// Allow themes/plugins to add additional selectors to apply fitvids to
+	$players = apply_filters( 'protected_iframe_players', array(
+		'iframe',
+		'embed',
+		'object',
+	) );
+
 	?>
 	<html>
 		<head>
@@ -188,6 +226,9 @@ function display_protected_iframe( \WP $wp ) {
 		<body>
 			<?php echo $embed->get_html(); ?>
 			<script type="text/javascript">
+				<?php include 'js/fitvids.min.js'; ?>
+				fitvids( { players: <?php echo wp_json_encode( $players ); ?> } );
+
 				var funcSizeRequest = function( e ) {
 					var ref = document.createElement( 'a' );
 					ref.href = document.referrer;
