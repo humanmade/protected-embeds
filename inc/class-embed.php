@@ -18,7 +18,7 @@ class Embed {
 			global $wpdb;
 
 			$row = $wpdb->get_row(
-				$wpdb->prepare( 'SELECT embed_id, src, embed_group_id, html FROM protected_embeds WHERE embed_id = %s', $id )
+				$wpdb->prepare( "SELECT embed_id, src, embed_group_id, html FROM {$wpdb->base_prefix}protected_embeds WHERE embed_id = %s", $id )
 			);
 
 			if ( ! $row ) {
@@ -40,7 +40,7 @@ class Embed {
 	public static function create( $src = '', $embed_group_id = '', $html = '' ) {
 		global $wpdb;
 		$id = md5( $html . rand( 0, 10000 ) . time() );
-		$insert = $wpdb->insert( 'protected_embeds', array( 'embed_id' => $id, 'src' => $src, 'embed_group_id' => $embed_group_id, 'html' => $html ) );
+		$insert = $wpdb->insert( "{$wpdb->base_prefix}protected_embeds", array( 'embed_id' => $id, 'src' => $src, 'embed_group_id' => $embed_group_id, 'html' => $html ) );
 		return static::get( $id );
 	}
 
@@ -53,7 +53,7 @@ class Embed {
 	 */
 	public static function update( $id, $html = '' ) {
 		global $wpdb;
-		$update = $wpdb->update( 'protected_embeds', array( 'html' => $html ), array( 'embed_id' => $id ) );
+		$update = $wpdb->update( "{$wpdb->base_prefix}protected_embeds", array( 'html' => $html ), array( 'embed_id' => $id ) );
 
 		wp_cache_delete( $id, 'protected-embeds' );
 
