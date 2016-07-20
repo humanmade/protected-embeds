@@ -160,7 +160,7 @@ function protected_iframe_shortcode( $attrs ) {
 					window.addEventListener( 'resize', funcOnResize, false );
 				} else if ( 'function' === typeof window.attachEvent ) {
 					window.attachEvent( 'onmessage', funcSizeResponse );
-					window.attachEvent( 'resize', funcOnResize );
+					window.attachEvent( 'onresize', funcOnResize );
 				}
 			}
 			if (document.readyState === 'complete') { func.apply(); /* compat for infinite scroll */ }
