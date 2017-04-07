@@ -5,7 +5,7 @@
 			A drop-in replacement for WordPress.com protected embeds
 		</td>
 		<td align="right" width="20%">
-			
+			<!-- -->
 		</td>
 	</tr>
 	<tr>
