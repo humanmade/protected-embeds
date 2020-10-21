@@ -1,0 +1,9 @@
+{
+    "name": "humanmade/protected-embeds",
+    "description": "A drop-in replacement for WordPress.com protected embeds",
+    "homepage": "https://github.com/humanmade/protected-embeds",
+    "type": "wordpress-plugin",
+    "require": {
+        "composer/installers": "~1.0"
+    }
+}
