@@ -179,8 +179,8 @@ function display_protected_iframe( \WP $wp ) {
 	$embed = Embed::get( $wp->query_vars['protected-iframe'] );
 
 	if ( ! $embed ) {
-	    return;
-    }
+		return;
+	}
 	?>
 	<html>
 		<head>
