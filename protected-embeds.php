@@ -163,11 +163,25 @@ function add_rewrite_rules() {
 	add_rewrite_rule( '^protected-iframe/([^/]+)?', 'index.php?protected-iframe=$matches[1]', 'top' );
 }
 
+/**
+ * Whether to allow a given request to be served through the protected embeds domain.
+ *
+ * Filterable so that themes can use the embeds domain for more than the Embeds here.
+ */
+function allow_embeds_domain() {
+	global $wp;
+
+	// Prevent any output on the embeds domain other than protected iframes
+	$allow = ( ! empty( $wp->query_vars['protected-iframe'] ) );
+
+	return apply_filters( 'protected_embeds_allow_embeds_domain', $allow );
+}
+
 function display_protected_iframe( \WP $wp ) {
 	$server = $_SERVER['HTTP_HOST'];
 
 	// Prevent any output on the embeds domain other than protected iframes
-	if ( PROTECTED_EMBEDS_DOMAIN === $server && empty( $wp->query_vars['protected-iframe'] ) ) {
+	if ( PROTECTED_EMBEDS_DOMAIN === $server && ! allow_embeds_domain() ) {
 		wp_die();
 	}
 
