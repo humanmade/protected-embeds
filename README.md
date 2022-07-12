@@ -18,6 +18,10 @@
 	</tr>
 </table>
 
+### Requirements
+
+This plugin requires the [Shortcake (Shortcode UI)](https://wordpress.org/plugins/shortcode-ui/) 
+plugin to enable the interface for adding the emebeds in the post content.
 
 ### Installation
 
