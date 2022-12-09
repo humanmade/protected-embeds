@@ -168,7 +168,9 @@ function display_protected_iframe( \WP $wp ) {
 
 	// Prevent any output on the embeds domain other than protected iframes
 	if ( PROTECTED_EMBEDS_DOMAIN === $server && empty( $wp->query_vars['protected-iframe'] ) ) {
-		wp_die();
+		
+		$html_200 = '<html><head></head><body<!-- Nothing to see here --></body></html>';
+		return $html_200;
 	}
 
 	// Don't return protected iframes on any other domain than the specified embeds domain
