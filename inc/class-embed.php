@@ -5,6 +5,34 @@ namespace Protected_Embeds;
 class Embed {
 
 	/**
+	 * Embed ID
+	 *
+	 * @var string
+	 */
+	protected $id;
+
+	/**
+	 * Embed source
+	 *
+	 * @var string
+	 */
+	protected $src;
+
+	/**
+	 * Embed HTML
+	 *
+	 * @var string
+	 */
+	protected $html;
+
+	/**
+	 * Embed group ID
+	 *
+	 * @var string
+	 */
+	protected $embed_group_id;
+
+	/**
 	 * Get an Embed from the database based off id.
 	 *
 	 * @param  string $id
